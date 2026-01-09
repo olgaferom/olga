@@ -1,0 +1,671 @@
+<!--
+    CV Updated - Olga Fernández Romero
+    Last updated: January 2026
+    Changes made:
+    - Calibrated font sizes to INTERMEDIATE values for optimal A4 fit:
+      * Body: 12px | Name: 30px | Subtitle: 11px
+      * Exp titles: 11.5px | Descriptions: 10px
+      * Metrics: 16px | Section titles: 14px
+      * Past experience: 9.5px
+    - Reduced paddings/margins for balanced spacing
+    - Photo: 100px | Main padding: 20px | Sidebar padding: 22px
+    - Maintained exact same structure, layout, and color palette
+    - All content fits perfectly in one A4 page
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV - Olga Fernández Romero</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Nunito+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --navy: #2d3a4a;
+            --navy-light: #3d4f63;
+            --pink-dark: #e84a7f;
+            --pink-medium: #f48fb1;
+            --pink-light: #fce4ec;
+            --white: #ffffff;
+            --text: #2d3a4a;
+            --text-light: #4a5d73;
+            --text-muted: #7a8a9a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito Sans', sans-serif;
+            background: #f0f0f0;
+            color: var(--text);
+            line-height: 1.4;
+            font-size: 12px;
+        }
+
+        .cv-container {
+            width: 210mm;
+            height: 297mm;
+            margin: 0 auto;
+            background: var(--white);
+            display: grid;
+            grid-template-columns: 210px 1fr;
+            overflow: hidden;
+        }
+
+        /* Left Sidebar */
+        .sidebar {
+            background: linear-gradient(180deg, var(--navy) 0%, var(--navy-light) 100%);
+            padding: 22px 16px;
+            display: flex;
+            flex-direction: column;
+            color: var(--white);
+        }
+
+        .photo-container {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--pink-dark) 0%, var(--pink-medium) 100%);
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 3px solid var(--pink-light);
+            box-shadow: 0 4px 20px rgba(232, 74, 127, 0.4);
+        }
+
+        .photo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .sidebar-tagline {
+            font-size: 10px;
+            text-align: center;
+            color: var(--pink-medium);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 14px;
+            line-height: 1.4;
+        }
+
+        .sidebar-section {
+            margin-bottom: 16px;
+        }
+
+        .sidebar-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--pink-medium);
+            margin-bottom: 8px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid var(--pink-dark);
+        }
+
+        /* Contact */
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+            margin-bottom: 6px;
+            font-size: 10px;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .contact-item svg {
+            width: 12px;
+            height: 12px;
+            fill: var(--pink-medium);
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .contact-item a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* Languages */
+        .language-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10.5px;
+            margin-bottom: 4px;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .language-level {
+            color: var(--pink-light);
+            font-size: 9.5px;
+        }
+
+        /* Skills */
+        .skill-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .skill-tag {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid var(--pink-dark);
+            padding: 3px 7px;
+            border-radius: 10px;
+            font-size: 9px;
+            color: var(--pink-light);
+        }
+
+        /* Education */
+        .edu-item {
+            margin-bottom: 12px;
+        }
+
+        .edu-degree {
+            font-weight: 600;
+            font-size: 10px;
+            color: var(--white);
+            line-height: 1.3;
+        }
+
+        .edu-school {
+            font-size: 9px;
+            color: rgba(255,255,255,0.75);
+        }
+
+        .edu-year {
+            font-size: 9px;
+            color: var(--pink-medium);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 20px 22px;
+            background: var(--white);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-header {
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--pink-dark);
+        }
+
+        .main-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 30px;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 5px;
+        }
+
+        .main-subtitle {
+            font-size: 11px;
+            color: var(--text-light);
+            line-height: 1.45;
+        }
+
+        .main-subtitle strong {
+            color: var(--pink-dark);
+        }
+
+        /* Metrics row */
+        .metrics-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 12px;
+            padding: 10px 16px;
+            background: linear-gradient(135deg, var(--pink-light) 0%, #fff0f5 100%);
+            border-radius: 6px;
+            border-left: 3px solid var(--pink-dark);
+        }
+
+        .metric {
+            text-align: center;
+        }
+
+        .metric-value {
+            font-family: 'Playfair Display', serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--pink-dark);
+        }
+
+        .metric-label {
+            font-size: 8px;
+            color: var(--navy);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        /* Section */
+        .section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, var(--pink-dark) 0%, var(--pink-light) 50%, transparent 100%);
+        }
+
+        /* Experience */
+        .exp-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .exp-item {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 3px;
+            padding-left: 12px;
+            border-left: 2px solid var(--pink-light);
+        }
+
+        .exp-item:hover {
+            border-left-color: var(--pink-dark);
+        }
+
+        .exp-left {
+            min-width: 0;
+        }
+
+        .exp-title {
+            font-weight: 600;
+            font-size: 11.5px;
+            color: var(--navy);
+            line-height: 1.25;
+        }
+
+        .exp-company {
+            font-size: 10px;
+            color: var(--pink-dark);
+            font-weight: 500;
+        }
+
+        .exp-meta {
+            font-size: 9px;
+            color: var(--text-muted);
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .exp-description {
+            grid-column: 1 / -1;
+            font-size: 10px;
+            color: var(--text);
+            line-height: 1.4;
+        }
+
+        .exp-description ul {
+            margin: 3px 0 0 0;
+            padding-left: 14px;
+        }
+
+        .exp-description li {
+            margin-bottom: 1px;
+        }
+
+        .exp-description strong {
+            color: var(--pink-dark);
+        }
+
+        /* Past experience */
+        .past-section {
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px dashed var(--pink-medium);
+            flex: 1;
+        }
+
+        .past-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .past-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px 16px;
+        }
+
+        .past-item {
+            font-size: 9.5px;
+            padding-left: 8px;
+            border-left: 1px solid var(--pink-light);
+        }
+
+        .past-item-title {
+            font-weight: 600;
+            color: var(--navy);
+        }
+
+        .past-item-company {
+            color: var(--text-light);
+        }
+
+        .past-item-date {
+            color: var(--text-muted);
+            font-size: 9px;
+            margin-top: 2px;
+        }
+
+        .past-item-desc {
+            color: var(--text);
+            font-size: 9px;
+            margin-top: 3px;
+            line-height: 1.4;
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                background: white;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .cv-container {
+                box-shadow: none;
+                margin: 0;
+            }
+            .sidebar {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+
+        @page {
+            size: A4;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="cv-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="photo-container">
+                <img src="photo.jpg" alt="Olga Fernández Romero">
+            </div>
+            
+            <div class="sidebar-tagline">AI × Healthcare × Education</div>
+
+            <!-- Contact -->
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Contact</h3>
+                <div class="contact-item">
+                    <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                    <a href="mailto:fernandezromeroolga@gmail.com">fernandezromeroolga@gmail.com</a>
+                </div>
+                <div class="contact-item">
+                    <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.15 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+                    <span>+34 646791358 (ES)<br>+971 585903494 (UAE)</span>
+                </div>
+                <div class="contact-item">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                    <span>Abu Dhabi, UAE</span>
+                </div>
+                <div class="contact-item">
+                    <svg viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                    <a href="https://linkedin.com/in/olgafdezromero">linkedin.com/in/olgafdezromero</a>
+                </div>
+            </div>
+
+            <!-- Languages -->
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Languages</h3>
+                <div class="language-item">
+                    <span>Spanish</span>
+                    <span class="language-level">Native</span>
+                </div>
+                <div class="language-item">
+                    <span>English</span>
+                    <span class="language-level">Professional</span>
+                </div>
+                <div class="language-item">
+                    <span>Italian</span>
+                    <span class="language-level">Professional</span>
+                </div>
+            </div>
+
+            <!-- Skills -->
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Skills</h3>
+                <div class="skill-tags">
+                    <span class="skill-tag">AI Education</span>
+                    <span class="skill-tag">LLMs</span>
+                    <span class="skill-tag">Cursor AI</span>
+                    <span class="skill-tag">Science Communication</span>
+                    <span class="skill-tag">Video Editing</span>
+                    <span class="skill-tag">Social Media</span>
+                    <span class="skill-tag">Community Building</span>
+                    <span class="skill-tag">E-learning</span>
+                    <span class="skill-tag">Instructional Design</span>
+                    <span class="skill-tag">Genetics</span>
+                    <span class="skill-tag">Cell Biology</span>
+                </div>
+            </div>
+
+            <!-- Education -->
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Education</h3>
+                
+                <div class="edu-item">
+                    <div class="edu-degree">MSc - AI Applied to Health Science</div>
+                    <div class="edu-school">Universitat de Barcelona</div>
+                    <div class="edu-year">Feb 2024 – Present</div>
+                </div>
+
+                <div class="edu-item">
+                    <div class="edu-degree">MBA - Executive Master's in AI</div>
+                    <div class="edu-school">Instituto de Inteligencia Artificial</div>
+                    <div class="edu-year">Oct 2024 – Feb 2025</div>
+                </div>
+
+                <div class="edu-item">
+                    <div class="edu-degree">MEd - Secondary Education</div>
+                    <div class="edu-school">Univ. Castilla-La Mancha</div>
+                    <div class="edu-year">2021 – 2022</div>
+                </div>
+
+                <div class="edu-item">
+                    <div class="edu-degree">MSc - Molecular Genetics & Biotech</div>
+                    <div class="edu-school">Universidad de Sevilla</div>
+                    <div class="edu-year">2020 – 2021</div>
+                </div>
+
+                <div class="edu-item">
+                    <div class="edu-degree">BSc - Biology</div>
+                    <div class="edu-school">Univ. Granada + Erasmus (Perugia)</div>
+                    <div class="edu-year">2016 – 2020</div>
+                </div>
+            </div>
+
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="main-header">
+                <h1 class="main-name">Olga Fernández Romero</h1>
+                <p class="main-subtitle">Biologist by training, educator by passion. Co-Founder of <strong>AI, Drugs & Robots</strong> (210K+ community) and <strong>aprenderIA Academy</strong>. Making complex topics accessible without losing scientific rigor.</p>
+            </header>
+
+            <!-- Key Metrics -->
+            <div class="metrics-row">
+                <div class="metric">
+                    <div class="metric-value">210K+</div>
+                    <div class="metric-label">Followers</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">~2K</div>
+                    <div class="metric-label">Community</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">250+</div>
+                    <div class="metric-label">Videos</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">100+</div>
+                    <div class="metric-label">Team Led</div>
+                </div>
+            </div>
+
+            <!-- Professional Experience -->
+            <section class="section">
+                <h2 class="section-title">Professional Experience</h2>
+                
+                <div class="exp-grid">
+                    <div class="exp-item">
+                        <div class="exp-left">
+                            <div class="exp-title">Co-Founder & Head of Science Communication</div>
+                            <div class="exp-company">AI, Drugs & Robots (@aidrugsyrobots)</div>
+                        </div>
+                        <div class="exp-meta">Jan 2023 – Present<br>Remote</div>
+                        <div class="exp-description">
+                            Technology and innovation media brand making AI, health, and science accessible to Spanish-speaking audiences worldwide.
+                            <ul>
+                                <li>Grew community from 0 to <strong>210K+ followers</strong> across Instagram, TikTok, YouTube, Twitter in under 3 years</li>
+                                <li>Manage WhatsApp community of <strong>~2K members</strong> organized in 10+ thematic groups (debates, news, tech, fitness)</li>
+                                <li>Produced <strong>250+ animated videos</strong>; curated nearly <strong>800 innovation stories</strong></li>
+                                <li><strong>Freepik AI Partner:</strong> beta tool testing, product reviews, and user-developer feedback bridge</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="exp-item">
+                        <div class="exp-left">
+                            <div class="exp-title">Co-Founder, Education Director & Social Media Director</div>
+                            <div class="exp-company">aprenderIA Academy (aprenderia.es)</div>
+                        </div>
+                        <div class="exp-meta">Feb 2025 – Present<br>Remote</div>
+                        <div class="exp-description">
+                            Online academy democratizing AI knowledge in Spanish. Practical courses for professionals from any industry. Launching early 2026.
+                            <ul>
+                                <li>Curriculum design, course development, and educational video editing</li>
+                                <li>Content strategy, community management, and brand positioning</li>
+                                <li>Business strategy and coordination of 6-person founding team</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="exp-item">
+                        <div class="exp-left">
+                            <div class="exp-title">Head of Communications and Social Media</div>
+                            <div class="exp-company">ACIEAU – Asociación de Científicos e Investigadores Españoles en EAU</div>
+                        </div>
+                        <div class="exp-meta">Nov 2025 – Present<br>Abu Dhabi (Hybrid)</div>
+                        <div class="exp-description">
+                            <ul>
+                                <li>Manage communication strategy and social media channels for the association</li>
+                                <li>Science outreach activities; highlight scientific projects between Spain and UAE</li>
+                                <li>Promote achievements of Spanish scientists and researchers based in the UAE</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="exp-item">
+                        <div class="exp-left">
+                            <div class="exp-title">Cursor AI Community Ambassador – UAE & Middle East</div>
+                            <div class="exp-company">Anysphere (Cursor)</div>
+                        </div>
+                        <div class="exp-meta">Sep 2025 – Present<br>Abu Dhabi (Hybrid)</div>
+                        <div class="exp-description">
+                            Second official Cursor AI Ambassador for UAE and Middle East region.
+                            <ul>
+                                <li>Organize hackathons, meetups, and Cursor Café knowledge-sharing sessions</li>
+                                <li>Building the most active AI tech community in Abu Dhabi and Dubai (3 events completed)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="exp-item">
+                        <div class="exp-left">
+                            <div class="exp-title">Master's Professor in Genetics, Genomics & Cell Biology</div>
+                            <div class="exp-company">STEM Future Education</div>
+                        </div>
+                        <div class="exp-meta">May 2024 – Present<br>Remote</div>
+                        <div class="exp-description">
+                            <ul>
+                                <li>Created master's course materials from scratch: content, presentations, video lectures</li>
+                                <li>Design of activities and exams; student guidance on biotech industry careers</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Past Experience -->
+                <div class="past-section">
+                    <div class="past-title">Previous Experience</div>
+                    <div class="past-grid">
+                        <div class="past-item">
+                            <span class="past-item-title">Healthcare Vocational Teacher & Tutor</span>
+                            <span class="past-item-company"> · CCC</span>
+                            <div class="past-item-date">Sep 2023 – Oct 2025 · Remote</div>
+                            <div class="past-item-desc">Cycles: Clinical & Biomedical Lab, Anatomical Pathology, Dietetics, Pharmacy, Dental Hygiene, Nursing. FCT supervision & PFC tutoring</div>
+                        </div>
+                        <div class="past-item">
+                            <span class="past-item-title">National Coordinator & Teacher</span>
+                            <span class="past-item-company"> · FP Claudio Galeno</span>
+                            <div class="past-item-date">Sep 2022 – Sep 2024 · Madrid</div>
+                            <div class="past-item-desc"><strong>National Coordinator of Anatomical Pathology & Cytodiagnosis.</strong> FCT & PFC supervision. Taught: Clinical Lab, Anatomical Pathology, Nursing, Dental Hygiene</div>
+                        </div>
+                        <div class="past-item">
+                            <span class="past-item-title">Event Operations Coordinator</span>
+                            <span class="past-item-company"> · Atlético de Madrid</span>
+                            <div class="past-item-date">Jan 2024 – Jan 2025 · Madrid</div>
+                            <div class="past-item-desc">Managed teams of 100+ staff during sporting events. VIP and Presidential area coordination. Real-time problem solving</div>
+                        </div>
+                        <div class="past-item">
+                            <span class="past-item-title">Box Office Manager</span>
+                            <span class="past-item-company"> · FITCA Theatre Festival</span>
+                            <div class="past-item-date">Apr 2023 – Jan 2025 · Almagro</div>
+                            <div class="past-item-desc">46th-47th editions; ticket sales operations, team coordination and customer service in high-demand environment</div>
+                        </div>
+                        <div class="past-item">
+                            <span class="past-item-title">Biology Teacher (ESO & Bachillerato)</span>
+                            <span class="past-item-company"> · IES Antonio Calvin</span>
+                            <div class="past-item-date">Feb 2022 – Jun 2022 · Almagro</div>
+                            <div class="past-item-desc">Secondary and high school Biology & Geology classes. Active learning methodologies and practical activities</div>
+                        </div>
+                        <div class="past-item">
+                            <span class="past-item-title">Biomedical Researcher</span>
+                            <span class="past-item-company"> · CABIMER</span>
+                            <div class="past-item-date">Jan 2021 – Jul 2021 · Sevilla</div>
+                            <div class="past-item-desc">Master's thesis: SUMO binding to transcriptional factors. PCR, Western Blot, immunoprecipitation techniques</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>
