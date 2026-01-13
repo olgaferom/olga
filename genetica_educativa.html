@@ -1,0 +1,958 @@
+<!--
+  Herramienta Educativa de Genética Médica
+  Creado: Enero 2026
+  Descripción: Aplicación web interactiva para enseñanza de genética en ciencias de la salud
+  Incluye: Simulador Mendeliano, Traductor ADN/ARN/Proteína, Quiz, Calculadora de riesgo
+-->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenEduca - Herramientas de Genética Médica</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #e8e8e8;
+        }
+
+        header {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(90deg, #00d4ff, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        header p {
+            color: #a0a0a0;
+            margin-top: 0.3rem;
+        }
+
+        nav {
+            display: flex;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            flex-wrap: wrap;
+            background: rgba(0,0,0,0.2);
+        }
+
+        nav button {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            background: rgba(255,255,255,0.1);
+            color: #e8e8e8;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+        }
+
+        nav button:hover, nav button.active {
+            background: linear-gradient(135deg, #7c3aed, #00d4ff);
+            transform: translateY(-2px);
+        }
+
+        main {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .tool-section {
+            display: none;
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .tool-section.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            color: #00d4ff;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        h3 {
+            color: #a78bfa;
+            margin: 1.5rem 0 0.8rem;
+        }
+
+        .description {
+            color: #a0a0a0;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #c0c0c0;
+        }
+
+        select, input[type="text"], textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            background: rgba(0,0,0,0.3);
+            color: #e8e8e8;
+            font-size: 1rem;
+        }
+
+        select:focus, input:focus, textarea:focus {
+            outline: none;
+            border-color: #7c3aed;
+        }
+
+        button.action-btn {
+            padding: 0.8rem 2rem;
+            background: linear-gradient(135deg, #7c3aed, #00d4ff);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        button.action-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 20px rgba(124, 58, 237, 0.4);
+        }
+
+        .result-box {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Punnett Square */
+        .punnett-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4px;
+            max-width: 300px;
+            margin: 1rem auto;
+        }
+
+        .punnett-cell {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 8px;
+        }
+
+        .punnett-header {
+            background: rgba(124, 58, 237, 0.3);
+            color: #a78bfa;
+        }
+
+        .punnett-result {
+            background: rgba(0, 212, 255, 0.2);
+            color: #00d4ff;
+        }
+
+        .punnett-corner {
+            background: transparent;
+        }
+
+        .genotype-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            min-width: 100px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            color: #00d4ff;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #a0a0a0;
+        }
+
+        /* DNA Sequence */
+        .sequence-display {
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            word-break: break-all;
+            padding: 1rem;
+            background: rgba(0,0,0,0.4);
+            border-radius: 8px;
+            margin: 0.5rem 0;
+        }
+
+        .dna { color: #00d4ff; }
+        .rna { color: #f472b6; }
+        .protein { color: #34d399; }
+
+        .codon-table {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .codon-item {
+            background: rgba(255,255,255,0.05);
+            padding: 0.5rem;
+            border-radius: 6px;
+            text-align: center;
+            font-family: monospace;
+        }
+
+        .codon-item span {
+            display: block;
+            font-size: 0.75rem;
+            color: #a0a0a0;
+        }
+
+        /* Quiz */
+        .quiz-question {
+            background: rgba(0,0,0,0.2);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+        }
+
+        .quiz-question p {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .quiz-option {
+            padding: 0.8rem 1rem;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .quiz-option:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(124, 58, 237, 0.5);
+        }
+
+        .quiz-option.correct {
+            background: rgba(52, 211, 153, 0.2);
+            border-color: #34d399;
+        }
+
+        .quiz-option.incorrect {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: #ef4444;
+        }
+
+        .quiz-score {
+            font-size: 1.3rem;
+            text-align: center;
+            padding: 1rem;
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.2), rgba(0, 212, 255, 0.2));
+            border-radius: 12px;
+        }
+
+        /* Risk Calculator */
+        .risk-result {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .risk-percentage {
+            font-size: 3rem;
+            font-weight: bold;
+            background: linear-gradient(90deg, #00d4ff, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .risk-bar {
+            height: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .risk-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #34d399, #fbbf24, #ef4444);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .inheritance-patterns {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .pattern-card {
+            background: rgba(255,255,255,0.05);
+            padding: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .pattern-card:hover, .pattern-card.selected {
+            border-color: #7c3aed;
+            background: rgba(124, 58, 237, 0.1);
+        }
+
+        .pattern-card h4 {
+            color: #00d4ff;
+            margin-bottom: 0.5rem;
+        }
+
+        .pattern-card p {
+            font-size: 0.85rem;
+            color: #a0a0a0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #606060;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 600px) {
+            nav {
+                justify-content: center;
+            }
+            .punnett-grid {
+                max-width: 250px;
+            }
+            .genotype-stats {
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🧬 GenEduca</h1>
+        <p>Herramientas Interactivas de Genética Médica</p>
+    </header>
+
+    <nav>
+        <button class="active" onclick="showTool('mendel')">🔬 Herencia Mendeliana</button>
+        <button onclick="showTool('translator')">🧪 ADN → Proteína</button>
+        <button onclick="showTool('quiz')">📝 Quiz Genética</button>
+        <button onclick="showTool('risk')">📊 Riesgo Hereditario</button>
+    </nav>
+
+    <main>
+        <!-- HERENCIA MENDELIANA -->
+        <section id="mendel" class="tool-section active">
+            <h2>🔬 Simulador de Herencia Mendeliana</h2>
+            <p class="description">Visualiza el cuadro de Punnett y calcula las probabilidades de genotipos y fenotipos en la descendencia.</p>
+
+            <div class="input-group">
+                <label>Genotipo del Progenitor 1:</label>
+                <select id="parent1">
+                    <option value="AA">AA (Homocigoto dominante)</option>
+                    <option value="Aa" selected>Aa (Heterocigoto)</option>
+                    <option value="aa">aa (Homocigoto recesivo)</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Genotipo del Progenitor 2:</label>
+                <select id="parent2">
+                    <option value="AA">AA (Homocigoto dominante)</option>
+                    <option value="Aa" selected>Aa (Heterocigoto)</option>
+                    <option value="aa">aa (Homocigoto recesivo)</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Ejemplo de rasgo:</label>
+                <select id="traitExample">
+                    <option value="custom">Personalizado (A/a)</option>
+                    <option value="cf">Fibrosis Quística (F=sano, f=enfermo)</option>
+                    <option value="hd">Enfermedad de Huntington (H=enfermo, h=sano)</option>
+                    <option value="sickle">Anemia Falciforme (S=sano, s=enfermo)</option>
+                    <option value="albinism">Albinismo (A=pigmentado, a=albino)</option>
+                </select>
+            </div>
+
+            <button class="action-btn" onclick="calculatePunnett()">Calcular Cruzamiento</button>
+
+            <div class="result-box" id="punnettResult" style="display:none;">
+                <h3>Cuadro de Punnett</h3>
+                <div class="punnett-grid" id="punnettGrid"></div>
+                
+                <h3>Proporciones Genotípicas</h3>
+                <div class="genotype-stats" id="genotypeStats"></div>
+                
+                <h3>Proporciones Fenotípicas</h3>
+                <div class="genotype-stats" id="phenotypeStats"></div>
+                
+                <div id="clinicalNote" style="margin-top:1.5rem; padding:1rem; background:rgba(239,68,68,0.1); border-radius:8px; display:none;">
+                    <strong style="color:#f87171;">⚠️ Nota Clínica:</strong>
+                    <p id="clinicalNoteText" style="margin-top:0.5rem; color:#d0d0d0;"></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- TRADUCTOR ADN -->
+        <section id="translator" class="tool-section">
+            <h2>🧪 Traductor ADN → ARN → Proteína</h2>
+            <p class="description">Introduce una secuencia de ADN y observa su transcripción a ARN mensajero y traducción a aminoácidos.</p>
+
+            <div class="input-group">
+                <label>Secuencia de ADN (cadena molde 3'→5'):</label>
+                <textarea id="dnaInput" rows="3" placeholder="Ej: TACGGATCCATG (usa solo A, T, G, C)">TACAAGGGATCCCAT</textarea>
+            </div>
+
+            <button class="action-btn" onclick="translateDNA()">Traducir Secuencia</button>
+
+            <div class="result-box" id="translatorResult" style="display:none;">
+                <h3>ADN (Cadena molde 3'→5')</h3>
+                <div class="sequence-display dna" id="dnaDisplay"></div>
+                
+                <h3>ADN (Cadena codificante 5'→3')</h3>
+                <div class="sequence-display dna" id="dnaComplementDisplay"></div>
+                
+                <h3>ARNm (5'→3')</h3>
+                <div class="sequence-display rna" id="rnaDisplay"></div>
+                
+                <h3>Secuencia de Aminoácidos</h3>
+                <div class="sequence-display protein" id="proteinDisplay"></div>
+                
+                <h3>Codones Traducidos</h3>
+                <div class="codon-table" id="codonTable"></div>
+            </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section id="quiz" class="tool-section">
+            <h2>📝 Quiz de Genética Médica</h2>
+            <p class="description">Pon a prueba tus conocimientos sobre genética clínica y enfermedades hereditarias.</p>
+
+            <button class="action-btn" onclick="startQuiz()" id="startQuizBtn">Comenzar Quiz</button>
+            
+            <div id="quizContainer" style="display:none;"></div>
+            <div id="quizScore" style="display:none;"></div>
+        </section>
+
+        <!-- CALCULADORA DE RIESGO -->
+        <section id="risk" class="tool-section">
+            <h2>📊 Calculadora de Riesgo Hereditario</h2>
+            <p class="description">Calcula la probabilidad de heredar una condición genética según el patrón de herencia.</p>
+
+            <h3>Selecciona el patrón de herencia:</h3>
+            <div class="inheritance-patterns">
+                <div class="pattern-card selected" onclick="selectPattern('ar')" id="pattern-ar">
+                    <h4>Autosómico Recesivo</h4>
+                    <p>Ej: Fibrosis quística, Anemia falciforme</p>
+                </div>
+                <div class="pattern-card" onclick="selectPattern('ad')" id="pattern-ad">
+                    <h4>Autosómico Dominante</h4>
+                    <p>Ej: Huntington, Marfan</p>
+                </div>
+                <div class="pattern-card" onclick="selectPattern('xr')" id="pattern-xr">
+                    <h4>Ligado al X Recesivo</h4>
+                    <p>Ej: Hemofilia, Daltonismo</p>
+                </div>
+                <div class="pattern-card" onclick="selectPattern('xd')" id="pattern-xd">
+                    <h4>Ligado al X Dominante</h4>
+                    <p>Ej: Raquitismo hipofosfatémico</p>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Estado del Padre:</label>
+                <select id="fatherStatus">
+                    <option value="healthy">Sano (no portador)</option>
+                    <option value="carrier">Portador</option>
+                    <option value="affected">Afectado</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Estado de la Madre:</label>
+                <select id="motherStatus">
+                    <option value="healthy">Sana (no portadora)</option>
+                    <option value="carrier" selected>Portadora</option>
+                    <option value="affected">Afectada</option>
+                </select>
+            </div>
+
+            <button class="action-btn" onclick="calculateRisk()">Calcular Riesgo</button>
+
+            <div class="result-box" id="riskResult" style="display:none;">
+                <div class="risk-result">
+                    <p style="margin-bottom:1rem; color:#a0a0a0;">Probabilidad de hijo afectado:</p>
+                    <div class="risk-percentage" id="riskPercentage">25%</div>
+                    <div class="risk-bar">
+                        <div class="risk-fill" id="riskBar" style="width: 25%"></div>
+                    </div>
+                    <div id="riskDetails" style="text-align:left; margin-top:1.5rem;"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>GenEduca - Herramienta Educativa de Genética Médica | Máster en Genética 2026</p>
+    </footer>
+
+    <script>
+        // ============ NAVEGACIÓN ============
+        function showTool(toolId) {
+            document.querySelectorAll('.tool-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+            document.getElementById(toolId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // ============ HERENCIA MENDELIANA ============
+        function calculatePunnett() {
+            const p1 = document.getElementById('parent1').value;
+            const p2 = document.getElementById('parent2').value;
+            const trait = document.getElementById('traitExample').value;
+
+            const alleles1 = [p1[0], p1[1]];
+            const alleles2 = [p2[0], p2[1]];
+
+            const offspring = [];
+            for (let a1 of alleles1) {
+                for (let a2 of alleles2) {
+                    const genotype = a1.toUpperCase() === a1 ? a1 + a2 : a2 + a1;
+                    offspring.push(genotype.includes('A') && genotype.includes('a') ? 'Aa' : genotype);
+                }
+            }
+
+            // Construir cuadro de Punnett
+            const grid = document.getElementById('punnettGrid');
+            grid.innerHTML = `
+                <div class="punnett-cell punnett-corner"></div>
+                <div class="punnett-cell punnett-header">${alleles2[0]}</div>
+                <div class="punnett-cell punnett-header">${alleles2[1]}</div>
+                <div class="punnett-cell punnett-header">${alleles1[0]}</div>
+                <div class="punnett-cell punnett-result">${offspring[0]}</div>
+                <div class="punnett-cell punnett-result">${offspring[1]}</div>
+                <div class="punnett-cell punnett-header">${alleles1[1]}</div>
+                <div class="punnett-cell punnett-result">${offspring[2]}</div>
+                <div class="punnett-cell punnett-result">${offspring[3]}</div>
+            `;
+
+            // Calcular estadísticas
+            const counts = {};
+            offspring.forEach(g => counts[g] = (counts[g] || 0) + 1);
+
+            const genotypeStats = document.getElementById('genotypeStats');
+            genotypeStats.innerHTML = Object.entries(counts).map(([g, c]) => `
+                <div class="stat-item">
+                    <div class="stat-value">${(c/4*100).toFixed(0)}%</div>
+                    <div class="stat-label">${g}</div>
+                </div>
+            `).join('');
+
+            // Fenotipos
+            const dominant = offspring.filter(g => g.includes('A')).length;
+            const recessive = 4 - dominant;
+            
+            const phenotypeStats = document.getElementById('phenotypeStats');
+            const traitNames = {
+                'cf': ['Sano', 'Fibrosis Quística'],
+                'hd': ['Huntington', 'Sano'],
+                'sickle': ['Sano', 'Anemia Falciforme'],
+                'albinism': ['Pigmentado', 'Albino'],
+                'custom': ['Dominante', 'Recesivo']
+            };
+            const names = traitNames[trait];
+            
+            phenotypeStats.innerHTML = `
+                <div class="stat-item">
+                    <div class="stat-value">${(dominant/4*100).toFixed(0)}%</div>
+                    <div class="stat-label">${names[0]}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${(recessive/4*100).toFixed(0)}%</div>
+                    <div class="stat-label">${names[1]}</div>
+                </div>
+            `;
+
+            // Nota clínica
+            const clinicalNote = document.getElementById('clinicalNote');
+            const clinicalNoteText = document.getElementById('clinicalNoteText');
+            
+            if (trait !== 'custom' && recessive > 0) {
+                clinicalNote.style.display = 'block';
+                const notes = {
+                    'cf': `Existe un ${(recessive/4*100).toFixed(0)}% de probabilidad de que la descendencia tenga Fibrosis Quística. Se recomienda consejo genético y posible diagnóstico prenatal.`,
+                    'hd': `La Enfermedad de Huntington es autosómica dominante. Los individuos con al menos un alelo H desarrollarán la enfermedad (${(dominant/4*100).toFixed(0)}% de la descendencia).`,
+                    'sickle': `${(recessive/4*100).toFixed(0)}% de probabilidad de Anemia Falciforme. Los heterocigotos (Ss) tienen el rasgo falciforme pero generalmente son asintomáticos.`,
+                    'albinism': `${(recessive/4*100).toFixed(0)}% de probabilidad de albinismo. Los individuos afectados requerirán protección solar y seguimiento oftalmológico.`
+                };
+                clinicalNoteText.textContent = notes[trait];
+            } else {
+                clinicalNote.style.display = 'none';
+            }
+
+            document.getElementById('punnettResult').style.display = 'block';
+        }
+
+        // ============ TRADUCTOR ADN ============
+        const codonTable = {
+            'UUU': 'Phe', 'UUC': 'Phe', 'UUA': 'Leu', 'UUG': 'Leu',
+            'UCU': 'Ser', 'UCC': 'Ser', 'UCA': 'Ser', 'UCG': 'Ser',
+            'UAU': 'Tyr', 'UAC': 'Tyr', 'UAA': 'STOP', 'UAG': 'STOP',
+            'UGU': 'Cys', 'UGC': 'Cys', 'UGA': 'STOP', 'UGG': 'Trp',
+            'CUU': 'Leu', 'CUC': 'Leu', 'CUA': 'Leu', 'CUG': 'Leu',
+            'CCU': 'Pro', 'CCC': 'Pro', 'CCA': 'Pro', 'CCG': 'Pro',
+            'CAU': 'His', 'CAC': 'His', 'CAA': 'Gln', 'CAG': 'Gln',
+            'CGU': 'Arg', 'CGC': 'Arg', 'CGA': 'Arg', 'CGG': 'Arg',
+            'AUU': 'Ile', 'AUC': 'Ile', 'AUA': 'Ile', 'AUG': 'Met',
+            'ACU': 'Thr', 'ACC': 'Thr', 'ACA': 'Thr', 'ACG': 'Thr',
+            'AAU': 'Asn', 'AAC': 'Asn', 'AAA': 'Lys', 'AAG': 'Lys',
+            'AGU': 'Ser', 'AGC': 'Ser', 'AGA': 'Arg', 'AGG': 'Arg',
+            'GUU': 'Val', 'GUC': 'Val', 'GUA': 'Val', 'GUG': 'Val',
+            'GCU': 'Ala', 'GCC': 'Ala', 'GCA': 'Ala', 'GCG': 'Ala',
+            'GAU': 'Asp', 'GAC': 'Asp', 'GAA': 'Glu', 'GAG': 'Glu',
+            'GGU': 'Gly', 'GGC': 'Gly', 'GGA': 'Gly', 'GGG': 'Gly'
+        };
+
+        function translateDNA() {
+            let dna = document.getElementById('dnaInput').value.toUpperCase().replace(/[^ATGC]/g, '');
+            
+            if (dna.length < 3) {
+                alert('Introduce al menos 3 nucleótidos válidos (A, T, G, C)');
+                return;
+            }
+
+            // ADN molde (3'→5')
+            document.getElementById('dnaDisplay').textContent = `3'-${dna}-5'`;
+            
+            // ADN complementario/codificante (5'→3')
+            const dnaComplement = dna.split('').map(n => ({A:'T',T:'A',G:'C',C:'G'}[n])).join('');
+            document.getElementById('dnaComplementDisplay').textContent = `5'-${dnaComplement}-3'`;
+            
+            // ARNm (transcripción desde cadena molde)
+            const rna = dna.split('').map(n => ({A:'U',T:'A',G:'C',C:'G'}[n])).join('');
+            document.getElementById('rnaDisplay').textContent = `5'-${rna}-3'`;
+            
+            // Traducción
+            const codons = [];
+            const aminoacids = [];
+            
+            for (let i = 0; i < rna.length - 2; i += 3) {
+                const codon = rna.substr(i, 3);
+                const aa = codonTable[codon] || '?';
+                codons.push({ codon, aa });
+                if (aa === 'STOP') break;
+                aminoacids.push(aa);
+            }
+            
+            document.getElementById('proteinDisplay').textContent = aminoacids.join(' - ');
+            
+            document.getElementById('codonTable').innerHTML = codons.map(c => `
+                <div class="codon-item">
+                    ${c.codon}
+                    <span>${c.aa}</span>
+                </div>
+            `).join('');
+
+            document.getElementById('translatorResult').style.display = 'block';
+        }
+
+        // ============ QUIZ ============
+        const quizQuestions = [
+            {
+                q: "¿Cuál es el patrón de herencia de la Fibrosis Quística?",
+                options: ["Autosómico dominante", "Autosómico recesivo", "Ligado al X", "Mitocondrial"],
+                correct: 1
+            },
+            {
+                q: "Si ambos padres son portadores de un alelo recesivo patológico, ¿qué probabilidad tiene cada hijo de estar afectado?",
+                options: ["50%", "75%", "25%", "100%"],
+                correct: 2
+            },
+            {
+                q: "¿Qué codón indica el inicio de la traducción?",
+                options: ["UAA", "AUG", "UGA", "UAG"],
+                correct: 1
+            },
+            {
+                q: "La hemofilia A es una enfermedad ligada al cromosoma X recesiva. Si una mujer portadora tiene hijos con un hombre sano, ¿qué probabilidad tienen los hijos varones de estar afectados?",
+                options: ["0%", "25%", "50%", "100%"],
+                correct: 2
+            },
+            {
+                q: "¿Cuántos cromosomas tiene una célula somática humana normal?",
+                options: ["23", "46", "44", "48"],
+                correct: 1
+            },
+            {
+                q: "¿Qué tipo de mutación implica la pérdida de uno o más nucleótidos?",
+                options: ["Sustitución", "Inserción", "Deleción", "Translocación"],
+                correct: 2
+            },
+            {
+                q: "¿Cuál de estas enfermedades tiene herencia autosómica dominante?",
+                options: ["Anemia falciforme", "Enfermedad de Huntington", "Fenilcetonuria", "Fibrosis quística"],
+                correct: 1
+            },
+            {
+                q: "¿Qué significa que un individuo sea 'heterocigoto' para un gen?",
+                options: ["Tiene dos alelos iguales", "Tiene dos alelos diferentes", "No tiene ese gen", "Tiene el gen mutado"],
+                correct: 1
+            },
+            {
+                q: "¿Cuál es la función principal del ARN de transferencia (ARNt)?",
+                options: ["Almacenar información genética", "Transportar aminoácidos al ribosoma", "Catalizar la transcripción", "Formar el ribosoma"],
+                correct: 1
+            },
+            {
+                q: "¿Qué síndrome está causado por trisomía del cromosoma 21?",
+                options: ["Turner", "Klinefelter", "Down", "Edwards"],
+                correct: 2
+            }
+        ];
+
+        let currentQuiz = [];
+        let quizAnswered = 0;
+        let quizScore = 0;
+
+        function startQuiz() {
+            currentQuiz = [...quizQuestions].sort(() => Math.random() - 0.5).slice(0, 5);
+            quizAnswered = 0;
+            quizScore = 0;
+            
+            document.getElementById('startQuizBtn').style.display = 'none';
+            document.getElementById('quizScore').style.display = 'none';
+            
+            const container = document.getElementById('quizContainer');
+            container.style.display = 'block';
+            container.innerHTML = currentQuiz.map((q, i) => `
+                <div class="quiz-question" id="question-${i}">
+                    <p><strong>Pregunta ${i+1}:</strong> ${q.q}</p>
+                    <div class="quiz-options">
+                        ${q.options.map((opt, j) => `
+                            <div class="quiz-option" onclick="answerQuiz(${i}, ${j})">${opt}</div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function answerQuiz(questionIndex, answerIndex) {
+            const questionEl = document.getElementById(`question-${questionIndex}`);
+            const options = questionEl.querySelectorAll('.quiz-option');
+            
+            if (options[0].classList.contains('correct') || options[0].classList.contains('incorrect')) return;
+            
+            const correct = currentQuiz[questionIndex].correct;
+            
+            options.forEach((opt, i) => {
+                opt.style.pointerEvents = 'none';
+                if (i === correct) opt.classList.add('correct');
+                else if (i === answerIndex) opt.classList.add('incorrect');
+            });
+            
+            if (answerIndex === correct) quizScore++;
+            quizAnswered++;
+            
+            if (quizAnswered === currentQuiz.length) {
+                setTimeout(showQuizResults, 500);
+            }
+        }
+
+        function showQuizResults() {
+            const scoreEl = document.getElementById('quizScore');
+            scoreEl.style.display = 'block';
+            scoreEl.innerHTML = `
+                <div class="quiz-score">
+                    <p>🎯 Resultado: <strong>${quizScore}/${currentQuiz.length}</strong></p>
+                    <p style="margin-top:0.5rem; color:#a0a0a0;">
+                        ${quizScore === currentQuiz.length ? '¡Perfecto! 🏆' : 
+                          quizScore >= currentQuiz.length * 0.7 ? '¡Muy bien! 👏' : 
+                          quizScore >= currentQuiz.length * 0.5 ? 'Puedes mejorar 📚' : 'Sigue estudiando 💪'}
+                    </p>
+                </div>
+                <button class="action-btn" onclick="startQuiz()" style="margin-top:1rem;">Reintentar Quiz</button>
+            `;
+        }
+
+        // ============ CALCULADORA DE RIESGO ============
+        let selectedPattern = 'ar';
+
+        function selectPattern(pattern) {
+            selectedPattern = pattern;
+            document.querySelectorAll('.pattern-card').forEach(c => c.classList.remove('selected'));
+            document.getElementById(`pattern-${pattern}`).classList.add('selected');
+            
+            // Ajustar opciones según patrón
+            const fatherSelect = document.getElementById('fatherStatus');
+            const motherSelect = document.getElementById('motherStatus');
+            
+            if (pattern === 'xr' || pattern === 'xd') {
+                fatherSelect.innerHTML = `
+                    <option value="healthy">Sano (XY)</option>
+                    <option value="affected">Afectado (X*Y)</option>
+                `;
+                motherSelect.innerHTML = `
+                    <option value="healthy">Sana (XX)</option>
+                    <option value="carrier">Portadora (XX*)</option>
+                    <option value="affected">Afectada (X*X*)</option>
+                `;
+            } else {
+                fatherSelect.innerHTML = `
+                    <option value="healthy">Sano (no portador)</option>
+                    <option value="carrier">Portador</option>
+                    <option value="affected">Afectado</option>
+                `;
+                motherSelect.innerHTML = `
+                    <option value="healthy">Sana (no portadora)</option>
+                    <option value="carrier">Portadora</option>
+                    <option value="affected">Afectada</option>
+                `;
+            }
+        }
+
+        function calculateRisk() {
+            const father = document.getElementById('fatherStatus').value;
+            const mother = document.getElementById('motherStatus').value;
+            
+            let risk = 0;
+            let details = '';
+            
+            if (selectedPattern === 'ar') {
+                // Autosómico recesivo: solo aa está afectado
+                if (father === 'affected' && mother === 'affected') {
+                    risk = 100;
+                    details = 'Ambos padres afectados (aa × aa): 100% descendencia afectada.';
+                } else if (father === 'affected' && mother === 'carrier') {
+                    risk = 50;
+                    details = 'Padre afectado × Madre portadora (aa × Aa): 50% afectados, 50% portadores.';
+                } else if (father === 'carrier' && mother === 'affected') {
+                    risk = 50;
+                    details = 'Padre portador × Madre afectada (Aa × aa): 50% afectados, 50% portadores.';
+                } else if (father === 'carrier' && mother === 'carrier') {
+                    risk = 25;
+                    details = 'Ambos portadores (Aa × Aa): 25% afectados, 50% portadores, 25% sanos.';
+                } else if ((father === 'carrier' && mother === 'healthy') || (father === 'healthy' && mother === 'carrier')) {
+                    risk = 0;
+                    details = 'Un portador × uno sano: 0% afectados, 50% portadores.';
+                } else if (father === 'affected' || mother === 'affected') {
+                    risk = 0;
+                    details = 'Un afectado × uno sano: 0% afectados, 100% portadores.';
+                } else {
+                    risk = 0;
+                    details = 'Ambos sanos no portadores: 0% afectados.';
+                }
+            } else if (selectedPattern === 'ad') {
+                // Autosómico dominante: Aa o AA está afectado
+                if (father === 'affected' && mother === 'affected') {
+                    risk = 75;
+                    details = 'Ambos afectados (Aa × Aa): 75% afectados (25% homocigotos pueden tener fenotipo más severo).';
+                } else if (father === 'affected' || mother === 'affected') {
+                    risk = 50;
+                    details = 'Un progenitor afectado (Aa × aa): 50% afectados.';
+                } else {
+                    risk = 0;
+                    details = 'Ningún progenitor afectado: riesgo muy bajo (solo por mutación de novo).';
+                }
+            } else if (selectedPattern === 'xr') {
+                // Ligado al X recesivo
+                if (father === 'affected' && mother === 'affected') {
+                    risk = 100;
+                    details = 'Padre afectado × Madre afectada: 100% hijos afectados.';
+                } else if (father === 'affected' && mother === 'carrier') {
+                    risk = 50;
+                    details = 'Padre afectado × Madre portadora: 50% hijos varones afectados, 50% hijas portadoras, 50% hijas afectadas.';
+                } else if (father === 'healthy' && mother === 'carrier') {
+                    risk = 25;
+                    details = 'Padre sano × Madre portadora: 50% hijos varones afectados, hijas sanas (50% portadoras). Riesgo global: 25%.';
+                } else if (father === 'affected' && mother === 'healthy') {
+                    risk = 0;
+                    details = 'Padre afectado × Madre sana: 0% hijos afectados, 100% hijas portadoras.';
+                } else {
+                    risk = 0;
+                    details = 'Bajo riesgo con estos genotipos parentales.';
+                }
+            } else if (selectedPattern === 'xd') {
+                // Ligado al X dominante
+                if (father === 'affected') {
+                    risk = 50;
+                    details = 'Padre afectado: 100% de hijas afectadas, 0% de hijos afectados (heredan Y del padre).';
+                } else if (mother === 'affected') {
+                    risk = 50;
+                    details = 'Madre afectada (heterocigota): 50% de todos los hijos afectados.';
+                } else {
+                    risk = 0;
+                    details = 'Sin progenitores afectados: riesgo muy bajo.';
+                }
+            }
+            
+            document.getElementById('riskPercentage').textContent = `${risk}%`;
+            document.getElementById('riskBar').style.width = `${risk}%`;
+            document.getElementById('riskDetails').innerHTML = `<p>${details}</p>`;
+            document.getElementById('riskResult').style.display = 'block';
+        }
+
+        // Inicializar primera herramienta
+        calculatePunnett();
+    </script>
+</body>
+</html>
